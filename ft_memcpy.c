@@ -6,7 +6,7 @@
 /*   By: fcordon <marvin@le-101.fr>                 +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2016/10/17 15:51:59 by fcordon      #+#   ##    ##    #+#       */
-/*   Updated: 2018/11/23 18:52:02 by fcordon     ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/11/30 21:43:05 by fcordon     ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -21,7 +21,7 @@ static void		memcpy_not_same_alignement(t_longword dstp, t_longword srcp,
 	const size_t		shl = (8 - shift) * 8;
 
 	srcp -= shift;
-	while (FT_INFINITE)
+	while (1)
 	{
 		merge = *(t_longword *)srcp >> shr | *((t_longword *)(srcp + 8)) << shl;
 		*(t_longword *)dstp = merge;
@@ -44,7 +44,7 @@ static void		memcpy_not_same_alignement(t_longword dstp, t_longword srcp,
 static void		memcpy_same_alignement(t_longword dstp, t_longword srcp,
 										size_t len)
 {
-	while (FT_INFINITE)
+	while (1)
 	{
 		*(t_longword *)dstp = *(t_longword *)srcp;
 		dstp += 8;
@@ -64,7 +64,7 @@ static void		memcpy_same_alignement(t_longword dstp, t_longword srcp,
 
 static void		memcpy_no_alignement(t_byte *dst, t_byte *src, size_t len)
 {
-	while (FT_INFINITE)
+	while (1)
 	{
 		*dst = *src;
 		if (!--len)

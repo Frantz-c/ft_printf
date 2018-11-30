@@ -6,7 +6,7 @@
 /*   By: fcordon <marvin@le-101.fr>                 +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/11/19 09:48:49 by fcordon      #+#   ##    ##    #+#       */
-/*   Updated: 2018/11/30 21:16:17 by fcordon     ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/11/30 21:43:33 by fcordon     ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -35,8 +35,6 @@
 # define INTMAX		0x7fffffffU
 # define LONGMAX	0x7fffffffffffffffUL
 
-# define FT_INF32_P	0x7f800000U
-# define FT_INF32_N	0xff800000U
 # define FT_INF64_P	0x7ff0000000000000UL
 # define FT_INF64_N	0xfff0000000000000UL
 
@@ -54,7 +52,6 @@ typedef struct	s_opt
 	int		width;
 	int		precision;
 	int		length;
-	int		cast;
 }				t_opt;
 
 int				ft_printf(const char *fmt, ...);

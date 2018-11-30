@@ -6,7 +6,7 @@
 /*   By: fcordon <marvin@le-101.fr>                 +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/10/16 17:43:28 by fcordon      #+#   ##    ##    #+#       */
-/*   Updated: 2018/11/23 20:15:18 by fcordon     ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/11/30 21:45:36 by fcordon     ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -60,7 +60,7 @@ static char			*ft_strchr_2(t_longword ptr, t_byte c)
 	t_longword			has_null;
 	t_longword			has_char;
 
-	while (FT_INFINITE)
+	while (1)
 	{
 		has_null = *(t_longword *)ptr;
 		has_char = has_null ^ repeat_c;

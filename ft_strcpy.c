@@ -6,7 +6,7 @@
 /*   By: fcordon <marvin@le-101.fr>                 +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/10/18 11:44:20 by fcordon      #+#   ##    ##    #+#       */
-/*   Updated: 2018/11/23 19:26:09 by fcordon     ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/11/30 21:45:06 by fcordon     ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -42,7 +42,7 @@ static inline void		strcpy_not_same_alignement(t_longword dstp, t_longword srcp,
 	const t_longword	black_hole = 0x8080808080808080UL;
 
 	srcp -= shift;
-	while (FT_INFINITE)
+	while (1)
 	{
 		merge = *(t_longword *)srcp >> shr | *((t_longword *)srcp + 1) << shl;
 		if (((merge - repeat_one) & ~merge & black_hole) != 0)
@@ -62,7 +62,7 @@ static inline void		strcpy_same_alignement(t_longword dstp, t_longword srcp)
 	const t_longword	black_hole = 0x8080808080808080UL;
 	t_longword			word;
 
-	while (FT_INFINITE)
+	while (1)
 	{
 		word = *(t_longword *)srcp;
 		if (((word - repeat_one) & ~word & black_hole) != 0)
