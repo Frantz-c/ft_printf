@@ -6,7 +6,7 @@
 /*   By: fcordon <marvin@le-101.fr>                 +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/11/14 16:57:58 by fcordon      #+#   ##    ##    #+#       */
-/*   Updated: 2018/11/30 21:21:42 by fcordon     ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/11/30 21:37:15 by fcordon     ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -55,7 +55,6 @@ extern inline int	p_specifier(t_ullong n, t_opt *o)
 
 extern inline int	x_specifier(t_ullong n, t_opt *o)
 {
-	printf("XXXX = %llu\n", n);
 	return (xxx_specifier(n, o, 32));
 }
 
