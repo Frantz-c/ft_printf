@@ -1,0 +1,153 @@
+/* ************************************************************************** */
+/*                                                          LE - /            */
+/*                                                              /             */
+/*   f_specifier.c                                    .::    .:/ .      .::   */
+/*                                                 +:+:+   +:    +:  +:+:+    */
+/*   By: fcordon <marvin@le-101.fr>                 +:+   +:    +:    +:+     */
+/*                                                 #+#   #+    #+    #+#      */
+/*   Created: 2018/11/23 19:50:17 by fcordon      #+#   ##    ##    #+#       */
+/*   Updated: 2018/11/26 13:51:56 by fcordon     ###    #+. /#+    ###.fr     */
+/*                                                         /                  */
+/*                                                        /                   */
+/* ************************************************************************** */
+
+//#include <unistd.h>
+//#include <stdlib.h>
+#include "ft_printf.h"
+//#include <math.h>
+
+static t_ulong		get_integer_part(t_ulong n, t_ulong *integer, t_ulong curs, t_ulong curs2)
+{
+	while (curs2)
+	{
+		if (n & curs)
+			*integer |= curs2;
+		curs >>= 1;
+		curs2 >>= 1;
+	}
+	return (curs);
+}
+
+static void			get_decimal_part(t_ulong n, t_ulong *decimal, t_ulong curs)
+{
+	t_ulong		x;
+
+	x = 5000000000000000000UL;
+	while (curs)
+	{
+		if (n & curs)
+			*decimal += x;
+		if (x == 0)
+			break ;
+		x /= 2;
+		curs >>= 1;
+	}
+}
+
+/*
+** Nombres < 1 && > -1
+*/
+
+static inline int	get_zero_decimal_part(t_ulong n, t_ulong *integer, t_ulong *decimal, t_uint n_loop)
+{
+	t_ulong	x;
+	t_ulong	curs;
+
+	x = 5000000000000000000UL;
+	while (n_loop--)
+		x /= 2;
+	*decimal = x;
+	x /= 2;
+	curs = 1UL << 51;
+	while (curs)
+	{
+		if (n & curs)
+			*decimal += x;
+		if (x == 0)
+			break ;
+		x /= 2;
+		curs >>= 1;
+	}
+	*integer = 0;
+	return (0);
+}
+
+static int			is_inf_or_nan(t_ulong n)
+{
+	if (n & 0x8000000000000000UL)
+	{
+		if (n == FT_INF64_N)
+			return (write(1, "-inf", 4));
+		return (write(1, "-nan", 4));
+	}
+	if (n == FT_INF64_P)
+		return (write(1, "inf", 3));
+	return (write(1, "nan", 3));
+}
+
+static int			get_float(t_ulong n, t_ulong *integer, t_ulong *decimal, t_ulong curs)
+{
+	t_uint	expl;
+	t_ulong	curs2;
+
+	*integer = 0;
+	*decimal = 0;
+	expl = 0;
+	curs2 = 0x400UL; //(1UL << 10)
+	while (curs2)
+	{
+		if (n & curs)
+			expl |= curs2;
+		curs >>= 1;
+		curs2 >>= 1;
+	}
+	if (expl == 0x7ffU)
+		return (-1);
+	if (expl < 0x7ffU)
+		return (get_zero_decimal_part(n, integer, decimal, 0x3feU - expl));
+	expl -= 0x7ffU;
+	*integer |= 1UL << expl;
+	curs2 = (expl) ? 1UL << (expl - 1) : 0;
+	curs = get_integer_part(n, integer, curs, curs2);
+	get_decimal_part(n, decimal, curs);
+	return (0);
+}
+
+static inline int	ascii_double(t_ulong n, t_opt *o, char *in, char *dc)
+{
+	t_ulong		decimal;
+	t_ulong		integer;
+	int			nzero;
+	char		*p;
+   
+	if (get_float(n, &integer, &decimal, 0x4000000000000000UL) == -1)
+		return (is_inf_or_nan(n));
+	nzero = get_left_zero_count(decimal);
+	if (!o->precision)
+		o->precision = 6;
+	else if (o->precision > 19)
+		o->precision = 19;
+	p = dc;
+	while (nzero--)
+		*(p++) = '0';
+	decimal += ft_ten_powul(19 - o->precision + nzero) * 5;
+	ultoa_buf(decimal, p);
+	dc[o->precision] = '\0';
+	nzero = ultoa_buf(integer, in);
+	in[nzero] = '.';
+	in[nzero + 1] = '\0';
+	return (n & 0x8000000000000000UL);
+}
+
+extern inline int	f_specifier(double n, t_opt *o)
+{
+	char	integer[21];
+	char	decimal[21];
+	int		sign;
+
+	if ((sign = ascii_double(*(t_ullong*)&n, o, integer, decimal)) == 1)
+		write(1, "-", 1);
+	else if (sign > 1)
+		return (sign);
+	return (write(1, integer, ft_strlen(integer)) + write(1, decimal, ft_strlen(decimal)));
+}
