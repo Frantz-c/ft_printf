@@ -6,127 +6,100 @@
 /*   By: FCORDON <101@le-101.101>                   +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 1992/02/24 01:46:29 by FCORDON      #+#   ##    ##    #+#       */
-/*   Updated: 2018/11/30 18:08:56 by fcordon     ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/12/19 20:22:46 by fcordon     ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
+#include "call.h"
 
-static int			get_hhll(const char **p, int *length)
+static void			set_flag(const t_byte **s, t_opt *o)
 {
-	if (**p == 'h')
-	{
-		*length &= 0xf9;
-		if ((*p)[1] == 'h')
-		{
-			*length |= LEN_HH;
-			(*p)++;
-		}
-		else
-			*length |= LEN_H;
-	}
-	else if (**p == 'l')
-	{
-		*length &= 0xe7;
-		if ((*p)[1] == 'l')
-		{
-			*length |= LEN_LL;
-			(*p)++;
-		}
-		else
-			*length |= LEN_L;
-	}
-	else
-		return (0);
-	return (1);
-}
+	static const int		flag[49] = {
+		SPACE, 0, 0, SHARP, 0, 0, 0, 0,
+		0, 0, 0, PLUS, 0, MINUS, 0, 0, ZERO
+	};
+	register unsigned int	c;
 
-static inline void	get_length(const char **s, int *length)
-{
-	const char	*p = *s;
-
-	*length = 0;
-	while (1)
+	o->flag = 0;
+	while ((c = (**s - 32)) < 17 && flag[c])
 	{
-		if (*p == 'L')
-			*length |= LEN_LF;
-		else if (!get_hhll(&p, length))
-			break ;
-		p++;
-	}
-	*s = p;
-	if (*length & 0x18)
-		*length &= 0xf9;
-	else if (*length & 0x6)
-		*length &= 0xe7;
-}
-
-static void			get_flag(const char **s, int *flag)
-{
-	int	c;
-
-	*flag = 0;
-	while (1)
-	{
-		if ((c = **s) == '+')
-			*flag |= PLUS;
-		else if (c == '-')
-			*flag |= MINUS;
-		else if (c == ' ')
-			*flag |= SPACE;
-		else if (c == '0')
-			*flag |= ZERO;
-		else if (c == '#')
-			*flag |= SHARP;
-		else
-			break ;
+		o->flag |= flag[c];
 		(*s)++;
 	}
 }
 
-static void			get_width(const char **s, int *width)
+static void			set_length(const t_byte **s, t_opt *o)
 {
-	const char	*p = *s;
-	t_uint		tmp;
+	static const int		length[47] = {
+		L_LMAJ, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, L_H, 0,
+		L_J, 0, L_L, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, L_Z
+	};
+	register unsigned int	c;
+
+	o->length = 0;
+	while ((c = (**s - 76)) < 47 && length[c])
+	{
+		if ((*s)[1] == **s && (length[c] == L_L || length[c] == L_H))
+		{
+			o->length = length[c] + 1;
+			*s += 2;
+		}
+		else
+		{
+			o->length = length[c];
+			(*s)++;
+		}
+	}
+}
+
+static int			get_numerical_value(const t_byte **s, int default_v)
+{
+	const t_byte	*p = *s;
+	t_uint			tmp;
 
 	if (!ft_isdigit(*p))
-	{
-		*width = -1;
-		return ;
-	}
+		return (default_v);
 	tmp = 0;
-	while (ft_isdigit(*p))
+	while (1)
 	{
 		tmp *= 10;
 		tmp += *p - 48;
-		p++;
+		if (!ft_isdigit(*(++p)))
+			break ;
 	}
-	*width = tmp;
 	*s = p;
+	return (tmp);
 }
 
-extern inline int	print_conv(const char **string, t_opt *options, va_list ap)
+extern inline int	print_conv(const t_byte **string,
+								t_opt *options, va_list ap)
 {
-	get_flag(string, &options->flag);
+	set_flag(string, options);
 	if (**string == '*')
 	{
 		options->width = va_arg(ap, int);
+		if (options->width < -1)
+			options->width = -1;
 		(*string)++;
 	}
 	else
-		get_width(string, &options->width);
+		options->width = get_numerical_value(string, -1);
 	options->precision = -1;
 	if (**string == '.')
 	{
-		if (*((*string)++) == '*')
+		if (*(++(*string)) == '*')
 		{
 			options->precision = va_arg(ap, int);
+			if (options->precision < -1)
+				options->precision = -1;
 			(*string)++;
 		}
 		else
-			get_width(string, &options->precision);
+			options->precision = get_numerical_value(string, 0);
 	}
-	get_length(string, &options->length);
-	return (get_specifier(string, options, ap));
+	set_length(string, options);
+	return (call_convertion_function(string, options, ap));
 }

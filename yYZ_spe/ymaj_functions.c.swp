@@ -1,0 +1,67 @@
+/* ************************************************************************** */
+/*                                                          LE - /            */
+/*                                                              /             */
+/*   ymaj_functions.c                                 .::    .:/ .      .::   */
+/*                                                 +:+:+   +:    +:  +:+:+    */
+/*   By: fcordon <marvin@le-101.fr>                 +:+   +:    +:    +:+     */
+/*                                                 #+#   #+    #+    #+#      */
+/*   Created: 2018/12/11 20:07:45 by fcordon      #+#   ##    ##    #+#       */
+/*   Updated: 2018/12/20 11:01:48 by mhouppin    ###    #+. /#+    ###.fr     */
+/*                                                         /                  */
+/*                                                        /                   */
+/* ************************************************************************** */
+
+#include "../ft_printf.h"
+#include "y_functions.h"
+
+extern int		uintmax_t_tab(uintmax_t *t, t_opt *o)
+{
+	int		i;
+	int		ret;
+
+	i = 0;
+	ret = write(1, "\n", 1);
+	while (i < o->width)
+	{
+		if (o->precision == 2)
+			ret += (o->flag & SHARP) ? ft_printf("[%d] = % jb\n", i, t[i]) :
+										ft_printf("% jb\n", t[i]);
+		else if (o->precision == 8)
+			ret += (o->flag & SHARP) ? ft_printf("[%d] = %jo\n", i, t[i]) :
+										ft_printf("%jo\n", t[i]);
+		else if (o->precision == 16)
+			ret += (o->flag & SHARP) ? ft_printf("[%d] = %jx\n", i, t[i]) :
+										ft_printf("%jx\n", t[i]);
+		else
+			ret += (o->flag & SHARP) ? ft_printf("[%d] = %ju\n", i, t[i]) :
+										ft_printf("%ju\n", t[i]);
+		i++;
+	}
+	return (ret);
+}
+
+extern int		size_t_tab(size_t *t, t_opt *o)
+{
+	int		i;
+	int		ret;
+
+	i = 0;
+	ret = write(1, "\n", 1);
+	while (i < o->width)
+	{
+		if (o->precision == 2)
+			ret += (o->flag & SHARP) ? ft_printf("[%d] = % zb\n", i, t[i]) :
+										ft_printf("% zb\n", t[i]);
+		else if (o->precision == 8)
+			ret += (o->flag & SHARP) ? ft_printf("[%d] = %zo\n", i, t[i]) :
+										ft_printf("%zo\n", t[i]);
+		else if (o->precision == 16)
+			ret += (o->flag & SHARP) ? ft_printf("[%d] = %zx\n", i, t[i]) :
+										ft_printf("%zx\n", t[i]);
+		else
+			ret += (o->flag & SHARP) ? ft_printf("[%d] = %zu\n", i, t[i]) :
+										ft_printf("%zu\n", t[i]);
+		i++;
+	}
+	return (ret);
+}

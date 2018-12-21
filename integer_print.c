@@ -6,7 +6,7 @@
 /*   By: fcordon <marvin@le-101.fr>                 +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/11/18 14:00:24 by fcordon      #+#   ##    ##    #+#       */
-/*   Updated: 2018/11/29 16:09:33 by fcordon     ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/12/21 09:58:06 by mhouppin    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -48,10 +48,10 @@ static int	width_and_precision(char *n, t_opt *o, char *sign, const int len)
 	int		sign_len;
 
 	sign_len = (*sign != 0) + (sign[1] != 0);
-	ret = o->width > o->precision + sign_len ?
-			o->width : o->precision + sign_len;
 	if (o->precision < len)
 		o->precision = len;
+	ret = o->width > o->precision + sign_len ?
+			o->width : o->precision + sign_len;
 	o->width -= o->precision + sign_len;
 	if (!(o->flag & MINUS))
 	{
@@ -90,7 +90,7 @@ static int	only_precision(char *n, t_opt *o, char *sign, const int len)
 	ret = sign_len;
 	ret += (o->precision > len) ? o->precision : len;
 	if (sign_len)
-		ret = write(1, sign, sign_len);
+		write(1, sign, sign_len);
 	while (o->precision-- > len)
 		write(1, "0", 1);
 	write(1, n, len);
@@ -102,8 +102,13 @@ inline int	print_number_with_options(char *n, t_opt *o, int neg)
 	const int	len = ft_strlen(n);
 	char		sign[2];
 
+	if (neg == 123456789)
+		neg = 'x';
+	else if (((*n == '0' && n[1] == 0) || *n == 0) && (o->precision == -1
+			|| o->precision == 0))
+		return (width_only("0", o, "\0\0", (*n == '0')));
 	get_sign(o, neg, sign);
-	if (o->precision == -1)
+	if (o->precision < 0)
 	{
 		if (o->width == -1)
 		{

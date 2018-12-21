@@ -1,0 +1,46 @@
+/* ************************************************************************** */
+/*                                                          LE - /            */
+/*                                                              /             */
+/*   y_functions.c                                    .::    .:/ .      .::   */
+/*                                                 +:+:+   +:    +:  +:+:+    */
+/*   By: fcordon <marvin@le-101.fr>                 +:+   +:    +:    +:+     */
+/*                                                 #+#   #+    #+    #+#      */
+/*   Created: 2018/12/11 20:12:48 by fcordon      #+#   ##    ##    #+#       */
+/*   Updated: 2018/12/19 18:46:24 by fcordon     ###    #+. /#+    ###.fr     */
+/*                                                         /                  */
+/*                                                        /                   */
+/* ************************************************************************** */
+
+#include "../ft_printf.h"
+
+extern int		intmax_t_tab(ssize_t *t, t_opt *o)
+{
+	int		i;
+	int		ret;
+
+	i = 0;
+	ret = write(1, "\n", 1);
+	while (i < o->width)
+	{
+		ret += (o->flag & SHARP) ? ft_printf("[%d] = %jd\n", i, t[i]) :
+									ft_printf("%jd\n", t[i]);
+		i++;
+	}
+	return (ret);
+}
+
+extern int		ssize_t_tab(ssize_t *t, t_opt *o)
+{
+	int		i;
+	int		ret;
+
+	i = 0;
+	ret = write(1, "\n", 1);
+	while (i < o->width)
+	{
+		ret += (o->flag & SHARP) ? ft_printf("[%d] = %zd\n", i, t[i]) :
+									ft_printf("%zd\n", t[i]);
+		i++;
+	}
+	return (ret);
+}
