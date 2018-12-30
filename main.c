@@ -45,8 +45,9 @@ int				main(void)
 	list->inode = 96330225;
 	list->next = NULL;
 	list = tmp;
-	printf("printf   : [%#o][%.p][%+d]\n", 0, 0, 0);
-	ft_printf("ft_printf : [%#o][%.p][%+d]\n", 0, 0, 0);
+	printf("printf   : [%#.lf][%lf]\n", 0.0, 0.5);
+	ft_printf("ft_printf : [%#.lf][%lf]\n", 0.0, 0.5);
+    return (0);
 	ft_printf("tab = %10y\n", tab);
 	ft_printf("tab = %10.2Y\n", tab2);
 	ft_printf("tab = %Z\n", s);
@@ -55,6 +56,12 @@ int				main(void)
 	ft_printf("tab = %#Z\n", s);
 	ft_printf("list = %wchar*=name,size_t=size,int=inode,next;\n", list);
 	ft_printf("list = %Ws_ls,main.c;\n", list);
+    int c = ' ';
+    while (c < 127)
+    {
+        ft_printf("[%d]'%c' = % hhb\n", c, c, c);
+        c++;
+    }
 	free(list->next->next->name);
 	free(list->next->next);
 	free(list->next->name);

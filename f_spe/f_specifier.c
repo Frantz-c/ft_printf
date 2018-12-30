@@ -53,7 +53,12 @@ static void			set_integer_part(double n, char *buffer, int *digit)
 {
 	int		digit_val;
 
-	while (n >= 1)
+    if ((long)n == 0)
+    {
+        buffer[(*digit)--] = '0';
+        return ;
+    }
+	while (n > 0)
 	{
 		digit_val = ft_mod(n, 10);
 		buffer[(*digit)--] = digit_val + 48;
