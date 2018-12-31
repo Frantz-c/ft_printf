@@ -48,6 +48,7 @@ static char			*round_number(int precision, char *in, char *dc)
 	char		round[41];
 	int			nzero;
 
+    puts("\e[1;34mROUND\e[0m");
 	*round = '5';
 	if (38 - precision > 0)
 	{
@@ -60,7 +61,7 @@ static char			*round_number(int precision, char *in, char *dc)
 	while (nzero--)
 		*(--dc) = '0';
 	numeric_str_add(dc, round);
-	ft_strcat(in, ".");
+    ft_strcat(in, ".");
 	return (dc);
 }
 
@@ -80,8 +81,13 @@ static inline int	ascii_double(t_ulong128 *n, t_opt *o, char **in, char **dc)
 	*dc = ulong128_to_ascii(*dc, &decimal, 48);
 	if (o->precision > 0)
 		*dc = round_number(o->precision, *in, *dc);
-	else if (**dc > '5')
-		*in -= numeric_str_add(*in, "1");
+    else
+    {
+        if (**dc > '5')
+            *in -= numeric_str_add(*in, "1");
+        if (o->flag & SHARP)
+            ft_strcat(*in, ".");
+    }
 	(*dc)[o->precision] = '\0';
 	o->precision = -1;
 	return ((n->hi & 0x8000UL) != 0);

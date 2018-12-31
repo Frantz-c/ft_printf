@@ -45,8 +45,8 @@ int				main(void)
 	list->inode = 96330225;
 	list->next = NULL;
 	list = tmp;
-	printf("printf   : [%#.lf][%lf]\n", 0.0, 0.5);
-	ft_printf("ft_printf : [%#.lf][%lf]\n", 0.0, 0.5);
+	printf("printf   : [%#.Lf][%.Lf]\n", 0.0l, 0.0l);
+	ft_printf("ft_printf : [%#.Lf][%.Lf]\n", 0.0l, 0.0l);
     return (0);
 	ft_printf("tab = %10y\n", tab);
 	ft_printf("tab = %10.2Y\n", tab2);
